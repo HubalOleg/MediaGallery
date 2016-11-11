@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.oleg.hubal.mediagallery.R;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
@@ -47,10 +49,15 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-//        String path = mMediaPathList.get(position);
-//        Bitmap bitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(path), 500, 500);
-//
-        holder.ivThumbnail.setImageDrawable(mContext.getDrawable(android.R.drawable.btn_minus));
+        if (mSize != 0) {
+            String path = mMediaPathList.get(position);
+            File f = new File(path);
+            Picasso.with(mContext)
+                    .load(f)
+                    .centerCrop()
+                    .resizeDimen(R.dimen.image_width, R.dimen.image_height)
+                    .into(holder.ivThumbnail);
+        }
     }
 
     @Override

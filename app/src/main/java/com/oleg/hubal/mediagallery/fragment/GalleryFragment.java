@@ -69,7 +69,7 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
         RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.rv_gallery_recycler);
         recyclerView.setHasFixedSize(true);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), Constants.IMAGE_COUNT);
         recyclerView.setLayoutManager(layoutManager);
 
         mAdapter = new ThumbnailAdapter(getContext(), null);

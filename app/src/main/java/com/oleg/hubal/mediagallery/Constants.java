@@ -16,4 +16,6 @@ public class Constants {
             "Video"
     };
 
+    public static final int IMAGE_COUNT = 5;
+
 }
