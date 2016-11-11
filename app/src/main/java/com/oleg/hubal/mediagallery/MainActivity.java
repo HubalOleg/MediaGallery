@@ -6,20 +6,24 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.oleg.hubal.mediagallery.adapter.GalleryPagerAdapter;
+
 public class MainActivity extends AppCompatActivity {
-    private static final int REQUEST_STORAGE = 0;
+
     private static String[] PERMISSION_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE};
+    private static final int REQUEST_STORAGE = 0;
+
+    private GalleryPagerAdapter mGalleryPagerAdapter;
 
     private LinearLayout mLayout;
     private FrameLayout mDisplayContainer;
-    private FrameLayout mGalleryContainer;
-
-    private GalleryFragment mGalleryFragment;
+    private ViewPager mGalleryPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,22 +32,18 @@ public class MainActivity extends AppCompatActivity {
 
         mLayout = (LinearLayout) findViewById(R.id.activity_main);
         mDisplayContainer = (FrameLayout) findViewById(R.id.fl_display_container);
-        mGalleryContainer = (FrameLayout) findViewById(R.id.fl_gallery_container);
+        mGalleryPager = (ViewPager) findViewById(R.id.vp_gallery_pager);
 
-        openGalleryWithPermission();
+        showGalleryWithPermission();
     }
 
-    private void openGalleryWithPermission() {
+    private void showGalleryWithPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             requestExternalStoragePermission();
         } else {
-            mGalleryFragment = new GalleryFragment();
-
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fl_gallery_container, mGalleryFragment)
-                    .commit();
+            mGalleryPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager());
+            mGalleryPager.setAdapter(mGalleryPagerAdapter);
         }
     }
 
