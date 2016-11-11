@@ -1,8 +1,6 @@
 package com.oleg.hubal.mediagallery.model;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -11,26 +9,25 @@ import java.util.TreeMap;
 
 public class MediaManager {
 
-    private Map<Integer, String> mediaIdPathStorage;
+    private TreeMap<Integer, String> mMediaIdPathStorage;
 
-    public MediaManager() {
-        mediaIdPathStorage = new TreeMap<>();
+    public MediaManager(TreeMap<Integer, String> mMediaStorage) {
+        mMediaIdPathStorage = mMediaStorage;
     }
 
     public void addMediaIdPath(int id, String path) {
-        mediaIdPathStorage.put(id, path);
+        mMediaIdPathStorage.put(id, path);
     }
 
-    public ArrayList<Integer> getMediaIdList() {
-        Set<Integer> keySet = mediaIdPathStorage.keySet();
-        return new ArrayList<>(keySet);
+    public int getMediaIdByPosition(int position) {
+        return mMediaIdPathStorage.get();
     }
 
-    public String getPath(int id) {
-        return mediaIdPathStorage.get(id);
+    public String getPathById(int id) {
+        return mMediaIdPathStorage.get(id);
     }
 
     public int getSize() {
-        return mediaIdPathStorage.size();
+        return mMediaIdPathStorage.size();
     }
 }

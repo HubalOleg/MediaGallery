@@ -25,7 +25,6 @@ import com.oleg.hubal.mediagallery.model.MediaManager;
  */
 
 public class GalleryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private MediaManager mMediaManager;
     private String mCursorColumnID = MediaStore.MediaColumns._ID;
     private String mCursorColumnMedia;
     private String[] mProjection;
@@ -47,7 +46,6 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPagerPosition = getArguments().getInt(Constants.PAGER_POSITION);
-        mMediaManager = new MediaManager();
 
         if (mPagerPosition == Constants.PAGE_PHOTO) {
             mCursorColumnMedia =  MediaStore.Images.Media.DATA;
@@ -70,7 +68,7 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
         recyclerView.setLayoutManager(layoutManager);
 
-        mAdapter = new ThumbnailAdapter(mMediaManager);
+        mAdapter = new ThumbnailAdapter(getContext(), null);
         recyclerView.setAdapter(mAdapter);
 
         getLoaderManager().initLoader(mPagerPosition, null, this);
@@ -85,14 +83,15 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        MediaManager mediaManager = new MediaManager();
         if (data.moveToFirst()) {
             do {
                 int id = data.getInt(data.getColumnIndex(mCursorColumnID));
                 String path = data.getString(data.getColumnIndex(mCursorColumnMedia));
-                mMediaManager.addMediaIdPath(id, path);
+                mediaManager.addMediaIdPath(id, path);
             } while (data.moveToNext());
         }
-        mAdapter.swapData(mMediaManager);
+        mAdapter.swapData(getContext(), mediaManager);
     }
 
     @Override
