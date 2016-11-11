@@ -4,7 +4,8 @@
     android:id="@+id/cv_thumbnail_card"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="#111111">
     <ImageView
         android:id="@+id/iv_thumbnail"
         android:layout_width="wrap_content"

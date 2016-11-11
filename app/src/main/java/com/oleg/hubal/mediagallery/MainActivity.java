@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
         mLayout = (LinearLayout) findViewById(R.id.activity_main);
         mDisplayContainer = (FrameLayout) findViewById(R.id.fl_display_container);
-        mGalleryPager = (ViewPager) findViewById(R.id.vp_gallery_pager);
 
         showGalleryWithPermission();
     }
@@ -42,8 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
             requestExternalStoragePermission();
         } else {
-            mGalleryPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager());
-            mGalleryPager.setAdapter(mGalleryPagerAdapter);
+            startGalleryPager();
         }
     }
 
@@ -72,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Snackbar.make(mLayout, R.string.permision_available_storage,
                         Snackbar.LENGTH_SHORT).show();
+                startGalleryPager();
             } else {
                 Snackbar.make(mLayout, R.string.permissions_not_granted,
                         Snackbar.LENGTH_SHORT).show();
@@ -79,5 +78,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    private void startGalleryPager() {
+        mGalleryPager = (ViewPager) findViewById(R.id.vp_gallery_pager);
+        mGalleryPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager());
+        mGalleryPager.setAdapter(mGalleryPagerAdapter);
     }
 }

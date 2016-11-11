@@ -11,6 +11,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,10 @@ import android.view.ViewGroup;
 import com.oleg.hubal.mediagallery.Constants;
 import com.oleg.hubal.mediagallery.R;
 import com.oleg.hubal.mediagallery.adapter.ThumbnailAdapter;
-import com.oleg.hubal.mediagallery.model.MediaManager;
+
+import java.util.ArrayList;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by User on 11.11.2016.
@@ -83,15 +87,15 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        MediaManager mediaManager = new MediaManager();
+        ArrayList<String> mediaPathList = new ArrayList<>();
         if (data.moveToFirst()) {
             do {
-                int id = data.getInt(data.getColumnIndex(mCursorColumnID));
                 String path = data.getString(data.getColumnIndex(mCursorColumnMedia));
-                mediaManager.addMediaIdPath(id, path);
+                mediaPathList.add(path);
             } while (data.moveToNext());
         }
-        mAdapter.swapData(getContext(), mediaManager);
+        Log.d(TAG, "onLoadFinished: " + mediaPathList.size());
+        mAdapter.swapData(getContext(), mediaPathList);
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.oleg.hubal.mediagallery.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.oleg.hubal.mediagallery.R;
-import com.oleg.hubal.mediagallery.model.MediaManager;
+
+import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 
@@ -21,20 +20,20 @@ import static android.content.ContentValues.TAG;
 
 public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.ViewHolder> {
 
-    private MediaManager mMediaManager;
+    private ArrayList<String> mMediaPathList;
     private Context mContext;
     private int mSize;
 
-    public ThumbnailAdapter(Context context, MediaManager mediaManager) {
-        init(context, mediaManager);
+    public ThumbnailAdapter(Context context, ArrayList<String> mediaPathList) {
+        init(context, mediaPathList);
     }
 
-    private void init(Context context, MediaManager mediaManager) {
+    private void init(Context context, ArrayList<String> mediaPathList) {
         mContext = context;
-        if (mediaManager != null) {
+        if (mediaPathList != null) {
             Log.d(TAG, "init: ");
-            mMediaManager = mediaManager;
-            mSize = mediaManager.getSize();
+            mMediaPathList = mediaPathList;
+            mSize = mediaPathList.size();
         }
     }
 
@@ -48,11 +47,10 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder: " + mSize);
-        int id = mMediaManager.getMediaIdByPosition(position + 1);
-        Bitmap bitmap = MediaStore.Images.Thumbnails
-                .getThumbnail(mContext.getContentResolver(), id, MediaStore.Images.Thumbnails.MINI_KIND, null);
-        holder.ivThumbnail.setImageBitmap(bitmap);
+//        String path = mMediaPathList.get(position);
+//        Bitmap bitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(path), 500, 500);
+//
+        holder.ivThumbnail.setImageDrawable(mContext.getDrawable(android.R.drawable.btn_minus));
     }
 
     @Override
@@ -60,8 +58,8 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
         return mSize;
     }
 
-    public void swapData(Context context, MediaManager mediaManager) {
-        init(context, mediaManager);
+    public void swapData(Context context, ArrayList<String> mediaPathList) {
+        init(context, mediaPathList);
         notifyDataSetChanged();
     }
 
