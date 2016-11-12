@@ -1,20 +1,19 @@
 package com.oleg.hubal.mediagallery.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.oleg.hubal.mediagallery.R;
-import com.squareup.picasso.Picasso;
+import com.oleg.hubal.mediagallery.model.MediaUnit;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by User on 11.11.2016.
@@ -22,21 +21,17 @@ import static android.content.ContentValues.TAG;
 
 public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.ViewHolder> {
 
-    private ArrayList<String> mMediaPathList;
+    private static final String TAG = "123123";
+    private ArrayList<MediaUnit> mMediaDataList;
     private Context mContext;
-    private int mSize;
+    ImageLoader mImageLoader;
 
-    public ThumbnailAdapter(Context context, ArrayList<String> mediaPathList) {
-        init(context, mediaPathList);
-    }
 
-    private void init(Context context, ArrayList<String> mediaPathList) {
+    public ThumbnailAdapter(Context context, ArrayList<MediaUnit> mediaDataList) {
+        mMediaDataList = mediaDataList;
         mContext = context;
-        if (mediaPathList != null) {
-            Log.d(TAG, "init: ");
-            mMediaPathList = mediaPathList;
-            mSize = mediaPathList.size();
-        }
+        mImageLoader = ImageLoader.getInstance();
+
     }
 
     @Override
@@ -49,31 +44,28 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (mSize != 0) {
-            String path = mMediaPathList.get(position);
-            File f = new File(path);
-            Picasso.with(mContext)
-                    .load(f)
-                    .centerCrop()
-                    .resizeDimen(R.dimen.image_width, R.dimen.image_height)
-                    .into(holder.ivThumbnail);
-        }
+        String path = mMediaDataList.get(position).getPath();
+        Uri uri = Uri.fromFile(new File(path));
+        mImageLoader.displayImage(uri.toString(), holder.ivThumbnail);
     }
 
     @Override
     public int getItemCount() {
-        return mSize;
+        if (mMediaDataList == null) {
+            return 0;
+        }
+        return mMediaDataList.size();
     }
 
-    public void swapData(Context context, ArrayList<String> mediaPathList) {
-        init(context, mediaPathList);
+    public void swapData(ArrayList<MediaUnit> mediaDataList) {
+        mMediaDataList = mediaDataList;
         notifyDataSetChanged();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivThumbnail;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             ivThumbnail = (ImageView) itemView.findViewById(R.id.iv_thumbnail);
         }

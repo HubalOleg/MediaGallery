@@ -11,7 +11,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,19 +18,19 @@ import android.view.ViewGroup;
 import com.oleg.hubal.mediagallery.Constants;
 import com.oleg.hubal.mediagallery.R;
 import com.oleg.hubal.mediagallery.adapter.ThumbnailAdapter;
+import com.oleg.hubal.mediagallery.model.MediaUnit;
 
 import java.util.ArrayList;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by User on 11.11.2016.
  */
 
 public class GalleryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private String mCursorColumnID = MediaStore.MediaColumns._ID;
-    private String mCursorColumnMedia;
-    private String[] mProjection;
+    private String mCursorColumnID;
+    private String mCursorColumnPath;
+    private String mCursorColumnDate;
+    private String mCursorColumnMIME;
     private Uri mMediaUri;
 
     private int mPagerPosition;
@@ -51,14 +50,19 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
         super.onCreate(savedInstanceState);
         mPagerPosition = getArguments().getInt(Constants.PAGER_POSITION);
 
+        mCursorColumnID = MediaStore.MediaColumns._ID;
+        mCursorColumnMIME = MediaStore.MediaColumns.MIME_TYPE;
+
         if (mPagerPosition == Constants.PAGE_PHOTO) {
-            mCursorColumnMedia =  MediaStore.Images.Media.DATA;
             mMediaUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            mCursorColumnPath =  MediaStore.Images.Media.DATA;
+            mCursorColumnDate = MediaStore.Images.ImageColumns.DATE_TAKEN;
+
         } else if (mPagerPosition == Constants.PAGE_VIDEO) {
-            mCursorColumnMedia =  MediaStore.Video.Media.DATA;
             mMediaUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+            mCursorColumnPath =  MediaStore.Video.Media.DATA;
+            mCursorColumnDate = MediaStore.Video.VideoColumns.DATE_TAKEN;
         }
-        mProjection = new String[] {mCursorColumnID, mCursorColumnMedia};
     }
 
     @Nullable
@@ -82,20 +86,22 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getContext(), mMediaUri, mProjection, null, null, null);
+        return new CursorLoader(getContext(), mMediaUri, null, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        ArrayList<String> mediaPathList = new ArrayList<>();
+        ArrayList<MediaUnit> mediaDataList = new ArrayList<>();
         if (data.moveToFirst()) {
             do {
-                String path = data.getString(data.getColumnIndex(mCursorColumnMedia));
-                mediaPathList.add(path);
+                int id = data.getInt(data.getColumnIndex(mCursorColumnID));
+                String path = data.getString(data.getColumnIndex(mCursorColumnPath));
+                String date = data.getString(data.getColumnIndex(mCursorColumnDate));
+                String mimeType = data.getString(data.getColumnIndex(mCursorColumnMIME));
+                mediaDataList.add(new MediaUnit(id, path, date, mimeType));
             } while (data.moveToNext());
         }
-        Log.d(TAG, "onLoadFinished: " + mediaPathList.size());
-        mAdapter.swapData(getContext(), mediaPathList);
+        mAdapter.swapData(mediaDataList);
     }
 
     @Override

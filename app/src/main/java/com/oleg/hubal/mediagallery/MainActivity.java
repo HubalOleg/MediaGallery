@@ -42,7 +42,14 @@ public class MainActivity extends AppCompatActivity {
             requestExternalStoragePermission();
         } else {
             startGalleryPager();
+            Utility.configureDefaultImageLoader(getApplicationContext());
         }
+    }
+
+    private void startGalleryPager() {
+        mGalleryPager = (ViewPager) findViewById(R.id.vp_gallery_pager);
+        mGalleryPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager());
+        mGalleryPager.setAdapter(mGalleryPagerAdapter);
     }
 
     private void requestExternalStoragePermission() {
@@ -78,11 +85,5 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-    }
-
-    private void startGalleryPager() {
-        mGalleryPager = (ViewPager) findViewById(R.id.vp_gallery_pager);
-        mGalleryPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager());
-        mGalleryPager.setAdapter(mGalleryPagerAdapter);
     }
 }
