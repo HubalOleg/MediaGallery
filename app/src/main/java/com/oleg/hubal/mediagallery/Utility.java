@@ -15,7 +15,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.oleg.hubal.mediagallery.model.MediaUnit;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by User on 12.11.2016.
@@ -24,13 +28,11 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 public class Utility {
     public static void configureDefaultImageLoader(Context context) {
         DisplayImageOptions mOptions = new DisplayImageOptions.Builder()
-                .showImageOnLoading(android.R.drawable.screen_background_light)
-                .imageScaleType(ImageScaleType.EXACTLY)
+                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)
-                .displayer(new FadeInBitmapDisplayer(700))
                 .build();
 
         ImageLoaderConfiguration defaultConfiguration
@@ -69,5 +71,14 @@ public class Utility {
         canvas.drawBitmap(bitmap, rect, rect, paint);
 
         return output;
+    }
+
+    public static void sortByDate(ArrayList<MediaUnit> mediaDataList) {
+        Collections.sort(mediaDataList, new Comparator<MediaUnit>() {
+            @Override
+            public int compare(MediaUnit unit1, MediaUnit unit2) {
+                return Long.valueOf(unit2.getDate()).compareTo(Long.valueOf((unit1.getDate())));
+            }
+        });
     }
 }

@@ -1,15 +1,15 @@
 package com.oleg.hubal.mediagallery.adapter;
 
-import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.oleg.hubal.mediagallery.R;
+import com.oleg.hubal.mediagallery.listener.OnActiveThumbnailListener;
 import com.oleg.hubal.mediagallery.model.MediaUnit;
 
 import java.io.File;
@@ -19,19 +19,21 @@ import java.util.ArrayList;
  * Created by User on 11.11.2016.
  */
 
-public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.ViewHolder> {
+public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.ViewHolder> implements View.OnClickListener {
 
-    private static final String TAG = "123123";
+    private ImageLoader mImageLoader;
+
+    private OnActiveThumbnailListener mThumbnailListener;
     private ArrayList<MediaUnit> mMediaDataList;
-    private Context mContext;
-    ImageLoader mImageLoader;
+
+    private RoundedImageView mActiveView;
+    private int mActivePosition = 0;
 
 
-    public ThumbnailAdapter(Context context, ArrayList<MediaUnit> mediaDataList) {
+    public ThumbnailAdapter(ArrayList<MediaUnit> mediaDataList, OnActiveThumbnailListener thumbnailListener) {
         mMediaDataList = mediaDataList;
-        mContext = context;
+        mThumbnailListener = thumbnailListener;
         mImageLoader = ImageLoader.getInstance();
-
     }
 
     @Override
@@ -44,9 +46,18 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String path = mMediaDataList.get(position).getPath();
-        Uri uri = Uri.fromFile(new File(path));
-        mImageLoader.displayImage(uri.toString(), holder.ivThumbnail);
+        RoundedImageView rivThumbnail = holder.rivThumbnail;
+        rivThumbnail.setImageResource(android.R.drawable.screen_background_light);
+        rivThumbnail.setBorderWidth(0f);
+        rivThumbnail.setOnClickListener(this);
+        rivThumbnail.setTag(position);
+
+        if (position == mActivePosition) {
+            setActiveView(position, rivThumbnail);
+            setImageViewWithCorner(position, rivThumbnail);
+        } else {
+            setImageViewWithoutCorner(position, rivThumbnail);
+        }
     }
 
     @Override
@@ -62,12 +73,44 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
         notifyDataSetChanged();
     }
 
+    @Override
+    public void onClick(View view) {
+        setImageViewWithoutCorner(mActivePosition, mActiveView);
+
+        int position = (int) view.getTag();
+
+        setActiveView(position, (RoundedImageView) view);
+    }
+
+    private void setActiveView(int position, RoundedImageView rivThumbnail) {
+        mActivePosition = position;
+        mActiveView = rivThumbnail;
+        setImageViewWithCorner(position, rivThumbnail);
+        mThumbnailListener.onActiveThumbnail(position);
+    }
+
+    private void setImageViewWithCorner(int position, RoundedImageView rivThumbnail) {
+        rivThumbnail.setBorderWidth(R.dimen.card_border_width);
+        String path = mMediaDataList.get(position).getPath();
+        Uri uri = Uri.fromFile(new File(path));
+        mImageLoader.displayImage(uri.toString(), rivThumbnail);
+    }
+
+    private void setImageViewWithoutCorner(int position, RoundedImageView rivThumbnail) {
+        rivThumbnail.setBorderWidth(0f);
+        String path = mMediaDataList.get(position).getPath();
+        Uri uri = Uri.fromFile(new File(path));
+        mImageLoader.displayImage(uri.toString(), rivThumbnail);
+    }
+
+
     class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivThumbnail;
+        RoundedImageView rivThumbnail;
 
         ViewHolder(View itemView) {
             super(itemView);
-            ivThumbnail = (ImageView) itemView.findViewById(R.id.iv_thumbnail);
+
+            rivThumbnail = (RoundedImageView) itemView.findViewById(R.id.riv_thumbnail_card);
         }
     }
 }

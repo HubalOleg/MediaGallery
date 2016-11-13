@@ -17,7 +17,10 @@ import android.view.ViewGroup;
 
 import com.oleg.hubal.mediagallery.Constants;
 import com.oleg.hubal.mediagallery.R;
+import com.oleg.hubal.mediagallery.Utility;
 import com.oleg.hubal.mediagallery.adapter.ThumbnailAdapter;
+import com.oleg.hubal.mediagallery.listener.OnActiveMediaPathListener;
+import com.oleg.hubal.mediagallery.listener.OnActiveThumbnailListener;
 import com.oleg.hubal.mediagallery.model.MediaUnit;
 
 import java.util.ArrayList;
@@ -26,16 +29,19 @@ import java.util.ArrayList;
  * Created by User on 11.11.2016.
  */
 
-public class GalleryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class GalleryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+        OnActiveThumbnailListener {
     private String mCursorColumnID;
     private String mCursorColumnPath;
     private String mCursorColumnDate;
     private String mCursorColumnMIME;
     private Uri mMediaUri;
 
-    private int mPagerPosition;
-
+    private ArrayList<MediaUnit> mMediaDataList;
     private ThumbnailAdapter mAdapter;
+
+    private OnActiveMediaPathListener mActiveMediaPathListener;
+    private int mPagerPosition;
 
     public static GalleryFragment newInstance(int position) {
         GalleryFragment galleryFragment = new GalleryFragment();
@@ -49,15 +55,15 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPagerPosition = getArguments().getInt(Constants.PAGER_POSITION);
+        mActiveMediaPathListener = (OnActiveMediaPathListener) getActivity();
 
         mCursorColumnID = MediaStore.MediaColumns._ID;
         mCursorColumnMIME = MediaStore.MediaColumns.MIME_TYPE;
 
-        if (mPagerPosition == Constants.PAGE_PHOTO) {
+        if (mPagerPosition == Constants.PAGE_IMAGE) {
             mMediaUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             mCursorColumnPath =  MediaStore.Images.Media.DATA;
             mCursorColumnDate = MediaStore.Images.ImageColumns.DATE_TAKEN;
-
         } else if (mPagerPosition == Constants.PAGE_VIDEO) {
             mMediaUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
             mCursorColumnPath =  MediaStore.Video.Media.DATA;
@@ -76,7 +82,7 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), Constants.IMAGE_COUNT);
         recyclerView.setLayoutManager(layoutManager);
 
-        mAdapter = new ThumbnailAdapter(getContext(), null);
+        mAdapter = new ThumbnailAdapter(null, this);
         recyclerView.setAdapter(mAdapter);
 
         getLoaderManager().initLoader(mPagerPosition, null, this);
@@ -91,21 +97,35 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        ArrayList<MediaUnit> mediaDataList = new ArrayList<>();
+        mMediaDataList = new ArrayList<>();
         if (data.moveToFirst()) {
             do {
                 int id = data.getInt(data.getColumnIndex(mCursorColumnID));
                 String path = data.getString(data.getColumnIndex(mCursorColumnPath));
                 String date = data.getString(data.getColumnIndex(mCursorColumnDate));
                 String mimeType = data.getString(data.getColumnIndex(mCursorColumnMIME));
-                mediaDataList.add(new MediaUnit(id, path, date, mimeType));
+                mMediaDataList.add(new MediaUnit(id, path, date, mimeType));
             } while (data.moveToNext());
         }
-        mAdapter.swapData(mediaDataList);
+        Utility.sortByDate(mMediaDataList);
+        mAdapter.swapData(mMediaDataList);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
+    @Override
+    public void onActiveThumbnail(int positions) {
+        String path = mMediaDataList.get(positions).getPath();
+        if (mPagerPosition == Constants.PAGE_IMAGE) {
+            mActiveMediaPathListener.onActiveImagePath(path);
+        }
+        if (mPagerPosition == Constants.PAGE_VIDEO) {
+            mActiveMediaPathListener.onActiveVideoPath(path);
+        }
+    }
+
+
 }

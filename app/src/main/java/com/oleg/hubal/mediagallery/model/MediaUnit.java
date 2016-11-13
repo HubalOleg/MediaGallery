@@ -1,7 +1,5 @@
 package com.oleg.hubal.mediagallery.model;
 
-import android.util.Log;
-
 /**
  * Created by User on 12.11.2016.
  */
@@ -14,7 +12,6 @@ public class MediaUnit {
     private String mimeType;
 
     public MediaUnit(int id, String path, String date, String mimeType) {
-        Log.d("123", "MediaUnit: " + path);
         this.id = id;
         this.path = path;
         this.date = date;
