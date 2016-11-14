@@ -14,6 +14,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
+import android.widget.Toast;
 
 import com.oleg.hubal.mediagallery.Constants;
 import com.oleg.hubal.mediagallery.R;
@@ -118,14 +120,17 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onActiveThumbnail(int positions) {
-        String path = mMediaDataList.get(positions).getPath();
-        if (mPagerPosition == Constants.PAGE_IMAGE) {
-            mActiveMediaPathListener.onActiveImagePath(path);
-        }
-        if (mPagerPosition == Constants.PAGE_VIDEO) {
-            mActiveMediaPathListener.onActiveVideoPath(path);
+        String mimeType = mMediaDataList.get(positions).getMimeType();
+        if (MimeTypeMap.getSingleton().hasMimeType(mimeType)) {
+            String path = mMediaDataList.get(positions).getPath();
+            if (mPagerPosition == Constants.PAGE_IMAGE) {
+                mActiveMediaPathListener.onActiveImagePath(path);
+            }
+            if (mPagerPosition == Constants.PAGE_VIDEO) {
+                mActiveMediaPathListener.onActiveVideoPath(path);
+            }
+        } else {
+            Toast.makeText(getContext(), R.string.mime_error, Toast.LENGTH_LONG).show();
         }
     }
-
-
 }

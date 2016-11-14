@@ -16,10 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="3dp"
-
-        app:gap="10"
         app:bar_color="@color/colorPrimaryDark"
-        app:data_type="_integer"
-        app:min_value="0"
-        app:max_value="100"/>
+        app:data_type="_integer"/>
 </LinearLayout>

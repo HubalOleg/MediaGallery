@@ -22,5 +22,5 @@ public class Constants {
     };
 
     public static final int IMAGE_COUNT = 5;
-    public static final int ROW_COUNT = 4;
+    public static final int ROW_COUNT = 3;
 }

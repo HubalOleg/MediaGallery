@@ -2,9 +2,9 @@ package com.oleg.hubal.mediagallery.fragment;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,23 +15,22 @@ import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.oleg.hubal.mediagallery.R;
 import com.oleg.hubal.mediagallery.listener.OnSetMediaListener;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * Created by User on 13.11.2016.
  */
 
 public class VideoFragment extends Fragment implements OnSetMediaListener, View.OnClickListener,
-        OnRangeSeekbarFinalValueListener{
+        OnRangeSeekbarFinalValueListener, MediaPlayer.OnPreparedListener {
 
-    private boolean mIsVideoPlaying = false;
-
-    private MediaPlayer mMediaPlayer;
+    final Handler loopHandler = new Handler();
 
     private CrystalRangeSeekbar mVideoSeekBar;
     private TextureVideoView mVideoTexture;
 
-    private int mProgressMinValue, mProgressMaxValue;
+    private int mProgressMinValue;
+    private int mProgressMaxValue;
+
+    private boolean mIsVideoPlaying = false;
 
     private String mPath;
 
@@ -41,9 +40,10 @@ public class VideoFragment extends Fragment implements OnSetMediaListener, View.
         View v = inflater.inflate(R.layout.fragment_video, container, false);
 
         mVideoTexture = (TextureVideoView) v.findViewById(R.id.trv_video_surface);
+        mVideoTexture.setOnClickListener(this);
+        mVideoTexture.setOnPreparedListener(this);
 
         mVideoSeekBar = (CrystalRangeSeekbar) v.findViewById(R.id.rsv_video_bar);
-
         mVideoSeekBar.setOnRangeSeekbarFinalValueListener(this);
 
         return v;
@@ -52,14 +52,29 @@ public class VideoFragment extends Fragment implements OnSetMediaListener, View.
     @Override
     public void onSetMedia(String path) {
         mPath = path;
+
         if (mVideoTexture != null) {
-            mProgressMinValue = 0;
-            mProgressMaxValue = 100;
-            mIsVideoPlaying = true;
             mVideoTexture.setVideoPath(path);
             mVideoTexture.start();
+            mIsVideoPlaying = true;
+            mVideoSeekBar.apply();
+            startPositionCounter();
         }
     }
+
+    private void startPositionCounter() {
+        loopHandler.removeCallbacksAndMessages(null);
+        loopHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mVideoTexture.getCurrentPosition() > mProgressMaxValue) {
+                    mVideoTexture.seekTo(mProgressMinValue);
+                }
+                loopHandler.postDelayed(this, 200);
+            }
+        }, 200);
+    }
+
 
     @Override
     public void onResume() {
@@ -72,13 +87,17 @@ public class VideoFragment extends Fragment implements OnSetMediaListener, View.
     @Override
     public void onPause() {
         super.onPause();
+        mVideoTexture.stopPlayback();
+        loopHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
     public void onClick(View view) {
         if (mIsVideoPlaying) {
+            mVideoTexture.pause();
             mIsVideoPlaying = !mIsVideoPlaying;
         } else {
+            mVideoTexture.start();
             mIsVideoPlaying = !mIsVideoPlaying;
         }
     }
@@ -87,6 +106,16 @@ public class VideoFragment extends Fragment implements OnSetMediaListener, View.
     public void finalValue(Number minValue, Number maxValue) {
         mProgressMinValue = Integer.parseInt(String.valueOf(minValue));
         mProgressMaxValue = Integer.parseInt(String.valueOf(maxValue));
-        Log.d(TAG, "valueChanged: " + mProgressMaxValue + "  " + mProgressMinValue);
+        mVideoTexture.seekTo(mProgressMinValue);
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer) {
+        mProgressMinValue = 0;
+        mProgressMaxValue = mediaPlayer.getDuration();
+        mVideoSeekBar.setMinStartValue(mProgressMinValue);
+        mVideoSeekBar.setMaxStartValue(mProgressMaxValue);
+        mVideoSeekBar.setMinValue(mProgressMinValue);
+        mVideoSeekBar.setMaxValue(mProgressMaxValue);
     }
 }
