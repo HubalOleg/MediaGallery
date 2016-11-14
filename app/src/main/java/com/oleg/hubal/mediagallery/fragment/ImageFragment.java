@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +14,6 @@ import com.oleg.hubal.mediagallery.R;
 import com.oleg.hubal.mediagallery.listener.OnSetMediaListener;
 
 import java.io.File;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by User on 13.11.2016.
@@ -37,7 +34,6 @@ public class ImageFragment extends Fragment implements OnSetMediaListener {
 
     @Override
     public void onSetMedia(String path) {
-        Log.d(TAG, "onSetMedia: " + path);
         mPath = path;
         File file = new File(path);
         Uri imageUri = Uri.fromFile(file);

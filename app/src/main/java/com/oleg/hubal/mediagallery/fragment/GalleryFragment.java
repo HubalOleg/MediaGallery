@@ -64,11 +64,11 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
 
         if (mPagerPosition == Constants.PAGE_IMAGE) {
             mMediaUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            mCursorColumnPath =  MediaStore.Images.Media.DATA;
+            mCursorColumnPath = MediaStore.Images.Media.DATA;
             mCursorColumnDate = MediaStore.Images.ImageColumns.DATE_TAKEN;
         } else if (mPagerPosition == Constants.PAGE_VIDEO) {
             mMediaUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-            mCursorColumnPath =  MediaStore.Video.Media.DATA;
+            mCursorColumnPath = MediaStore.Video.Media.DATA;
             mCursorColumnDate = MediaStore.Video.VideoColumns.DATE_TAKEN;
         }
     }
@@ -76,7 +76,7 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_gallery , container, false);
+        View v = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.rv_gallery_recycler);
         recyclerView.setHasFixedSize(true);
@@ -90,6 +90,22 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
         getLoaderManager().initLoader(mPagerPosition, null, this);
 
         return v;
+    }
+
+    @Override
+    public void onActiveThumbnail(int positions) {
+        String mimeType = mMediaDataList.get(positions).getMimeType();
+        if (MimeTypeMap.getSingleton().hasMimeType(mimeType)) {
+            String path = mMediaDataList.get(positions).getPath();
+            if (mPagerPosition == Constants.PAGE_IMAGE) {
+                mActiveMediaPathListener.onActiveImagePath(path);
+            }
+            if (mPagerPosition == Constants.PAGE_VIDEO) {
+                mActiveMediaPathListener.onActiveVideoPath(path);
+            }
+        } else {
+            Toast.makeText(getContext(), R.string.mime_error, Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -116,21 +132,5 @@ public class GalleryFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
-    }
-
-    @Override
-    public void onActiveThumbnail(int positions) {
-        String mimeType = mMediaDataList.get(positions).getMimeType();
-        if (MimeTypeMap.getSingleton().hasMimeType(mimeType)) {
-            String path = mMediaDataList.get(positions).getPath();
-            if (mPagerPosition == Constants.PAGE_IMAGE) {
-                mActiveMediaPathListener.onActiveImagePath(path);
-            }
-            if (mPagerPosition == Constants.PAGE_VIDEO) {
-                mActiveMediaPathListener.onActiveVideoPath(path);
-            }
-        } else {
-            Toast.makeText(getContext(), R.string.mime_error, Toast.LENGTH_LONG).show();
-        }
     }
 }

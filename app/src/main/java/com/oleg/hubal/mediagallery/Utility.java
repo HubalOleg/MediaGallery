@@ -40,8 +40,6 @@ public class Utility {
                 .tasksProcessingOrder(QueueProcessingType.LIFO)
                 .build();
 
-
-
         ImageLoader.getInstance().init(defaultConfiguration);
     }
 
@@ -54,11 +52,21 @@ public class Utility {
         });
     }
 
-    public static boolean checkIsPreviousThumbnailVisible(int activePosition, int previousPosition){
+    public static boolean checkIsPreviousThumbnailVisible(int activePosition, int previousPosition) {
         if (Math.abs(activePosition - previousPosition) <= Constants.ROW_COUNT * Constants.IMAGE_COUNT) {
             return true;
         } else {
             return false;
         }
+    }
+
+    public static ArrayList<MediaUnit> sortMimeType(ArrayList<MediaUnit> mediaDataList, String mimeType) {
+        ArrayList<MediaUnit> sortedMediaList = new ArrayList<MediaUnit>();
+        for (MediaUnit mediaUnit : mediaDataList) {
+            if (mediaUnit.getMimeType() == mimeType) {
+                sortedMediaList.add(mediaUnit);
+            }
+        }
+        return sortedMediaList;
     }
 }

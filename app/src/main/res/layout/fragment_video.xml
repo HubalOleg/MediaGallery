@@ -15,7 +15,10 @@
         android:id="@+id/rsv_video_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="3dp"
-        app:bar_color="@color/colorPrimaryDark"
+        android:background="#2b2b2b"
+        app:bar_color="#004124"
+        app:bar_highlight_color="#00ac5f"
+        app:left_thumb_color="#00ac5f"
+        app:right_thumb_color="#00ac5f"
         app:data_type="_integer"/>
 </LinearLayout>

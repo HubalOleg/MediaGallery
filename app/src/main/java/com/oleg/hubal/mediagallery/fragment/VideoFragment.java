@@ -80,7 +80,7 @@ public class VideoFragment extends Fragment implements OnSetMediaListener, View.
     public void onResume() {
         super.onResume();
         if (mPath != null) {
-           onSetMedia(mPath);
+            onSetMedia(mPath);
         }
     }
 

@@ -78,18 +78,10 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
     public void onClick(View view) {
         int position = (int) view.getTag();
 
-        if (Utility.checkIsPreviousThumbnailVisible(position, mActivePosition)) {
+        if (Utility.checkIsPreviousThumbnailVisible(position, mActivePosition))
             setImageViewWithoutCorner(mActivePosition, mActiveView);
-        }
 
         setActiveView(position, (RoundedImageView) view);
-    }
-
-    private void setActiveView(int position, RoundedImageView rivThumbnail) {
-        mActivePosition = position;
-        mActiveView = rivThumbnail;
-        setImageViewWithCorner(position, rivThumbnail);
-        mThumbnailListener.onActiveThumbnail(position);
     }
 
     private void setImageViewWithCorner(int position, RoundedImageView rivThumbnail) {
@@ -104,6 +96,13 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
         String path = mMediaDataList.get(position).getPath();
         Uri uri = Uri.fromFile(new File(path));
         mImageLoader.displayImage(uri.toString(), rivThumbnail);
+    }
+
+    private void setActiveView(int position, RoundedImageView rivThumbnail) {
+        mActivePosition = position;
+        mActiveView = rivThumbnail;
+        setImageViewWithCorner(position, rivThumbnail);
+        mThumbnailListener.onActiveThumbnail(position);
     }
 
 

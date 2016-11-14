@@ -12,7 +12,7 @@ import com.oleg.hubal.mediagallery.fragment.GalleryFragment;
  */
 
 public class GalleryPagerAdapter extends FragmentPagerAdapter {
-        public GalleryPagerAdapter(FragmentManager fm) {
+    public GalleryPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 

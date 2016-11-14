@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements OnActiveMediaPath
         Utility.configureDefaultImageLoader(getApplicationContext());
 
         mImageFragment = new ImageFragment();
-        mVideoFragment = new VideoFragment();
 
         showGalleryWithPermission();
         showImageDisplay();
@@ -84,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements OnActiveMediaPath
     @Override
     public void onActiveVideoPath(String path) {
         mActiveVideoPath = path;
+        if (mVideoFragment == null) {
+            mVideoFragment = new VideoFragment();
+        }
         mVideoFragment.onSetMedia(mActiveVideoPath);
     }
 
@@ -93,6 +95,9 @@ public class MainActivity extends AppCompatActivity implements OnActiveMediaPath
             showImageDisplay();
         }
         if (position == Constants.PAGE_VIDEO) {
+            if (mVideoFragment == null) {
+                mVideoFragment = new VideoFragment();
+            }
             showVideoDisplay();
             if (mActiveVideoPath != null) {
                 mVideoFragment.onSetMedia(mActiveVideoPath);
