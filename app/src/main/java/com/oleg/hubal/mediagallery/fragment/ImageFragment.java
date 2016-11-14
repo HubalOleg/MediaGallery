@@ -41,8 +41,8 @@ public class ImageFragment extends Fragment implements OnSetMediaListener {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         if (mPath != null) {
             onSetMedia(mPath);
         }

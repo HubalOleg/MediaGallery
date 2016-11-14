@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.oleg.hubal.mediagallery.R;
+import com.oleg.hubal.mediagallery.Utility;
 import com.oleg.hubal.mediagallery.listener.OnActiveThumbnailListener;
 import com.oleg.hubal.mediagallery.model.MediaUnit;
 
@@ -75,9 +76,11 @@ public class ThumbnailAdapter extends RecyclerView.Adapter<ThumbnailAdapter.View
 
     @Override
     public void onClick(View view) {
-        setImageViewWithoutCorner(mActivePosition, mActiveView);
-
         int position = (int) view.getTag();
+
+        if (Utility.checkIsPreviousThumbnailVisible(position, mActivePosition)) {
+            setImageViewWithoutCorner(mActivePosition, mActiveView);
+        }
 
         setActiveView(position, (RoundedImageView) view);
     }
