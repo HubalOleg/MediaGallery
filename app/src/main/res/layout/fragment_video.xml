@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <com.crust87.texturevideoview.widget.TextureVideoView
+        android:id="@+id/trv_video_surface"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:scaleType="centerCrop"/>
+    <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
+        android:id="@+id/rsv_video_bar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="123"/>
+        android:layout_margin="3dp"
+
+        app:gap="10"
+        app:bar_color="@color/colorPrimaryDark"
+        app:data_type="_integer"
+        app:min_value="0"
+        app:max_value="100"/>
 </LinearLayout>

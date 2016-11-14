@@ -15,7 +15,6 @@ import com.oleg.hubal.mediagallery.adapter.GalleryPagerAdapter;
 import com.oleg.hubal.mediagallery.fragment.ImageFragment;
 import com.oleg.hubal.mediagallery.fragment.VideoFragment;
 import com.oleg.hubal.mediagallery.listener.OnActiveMediaPathListener;
-import com.oleg.hubal.mediagallery.listener.OnSetMediaListener;
 
 
 public class MainActivity extends AppCompatActivity implements OnActiveMediaPathListener,
@@ -27,7 +26,6 @@ public class MainActivity extends AppCompatActivity implements OnActiveMediaPath
 
     private ImageFragment mImageFragment;
     private VideoFragment mVideoFragment;
-    private OnSetMediaListener mMediaListener;
 
     private String mActiveImagePath;
     private String mActiveVideoPath;
@@ -64,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements OnActiveMediaPath
     }
 
     private void showImageDisplay() {
-        mMediaListener = mImageFragment;
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fl_display_container, mImageFragment)
@@ -72,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements OnActiveMediaPath
     }
 
     private void showVideoDisplay() {
-        mMediaListener = mVideoFragment;
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fl_display_container, mVideoFragment)
@@ -82,13 +78,13 @@ public class MainActivity extends AppCompatActivity implements OnActiveMediaPath
     @Override
     public void onActiveImagePath(String path) {
         mActiveImagePath = path;
-        mMediaListener.onSetMedia(mActiveImagePath);
+        mImageFragment.onSetMedia(mActiveImagePath);
     }
 
     @Override
     public void onActiveVideoPath(String path) {
         mActiveVideoPath = path;
-        mMediaListener.onSetMedia(mActiveVideoPath);
+        mVideoFragment.onSetMedia(mActiveVideoPath);
     }
 
     @Override
@@ -98,6 +94,9 @@ public class MainActivity extends AppCompatActivity implements OnActiveMediaPath
         }
         if (position == Constants.PAGE_VIDEO) {
             showVideoDisplay();
+            if (mActiveVideoPath != null) {
+                mVideoFragment.onSetMedia(mActiveVideoPath);
+            }
         }
     }
 

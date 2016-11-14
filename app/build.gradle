@@ -28,7 +28,8 @@ dependencies {
     compile 'com.android.support:design:25.0.0'
     compile 'com.android.support:recyclerview-v7:25.0.0'
     compile 'com.makeramen:roundedimageview:2.2.1'
-    compile 'com.android.support:percent:25.0.0'
+    compile 'com.crystal:crystalrangeseekbar:1.1.1'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    compile 'com.crust87:texturevideoview:1.0.4'
     testCompile 'junit:junit:4.12'
 }
